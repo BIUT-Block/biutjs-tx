@@ -61,6 +61,29 @@ class _TokenBlockModelHandler {
   getSize () {
     return this.model.Size
   }
+
+  /**
+   * set the model block size
+   * @param {string} size
+   */
+  setSize (size) {
+    this.model.Size = size
+  }
+
+  /**
+   * set timestamp of block model
+   * @param {string} timestamp
+   */
+  setTimeStamp (timestamp) {
+    this.model.TimeStamp = timestamp
+  }
+
+  /**
+   * get timestamp of block model
+   */
+  getTimeStamp () {
+    return this.model.TimeStamp
+  }
 }
 
 /**

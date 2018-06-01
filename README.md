@@ -1,4 +1,7 @@
-Tokenchain transaction model
+### Usage
+npm install --save secjs-tx
+
+### Tokenchain transaction model
 
 * [_TokenTxModelHandler](#_TokenTxModelHandler)
     * [.getModel()](#_TokenTxModelHandler+getModel)
