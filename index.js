@@ -1,4 +1,5 @@
 const tokenChainBlockModel = require('./model/tokenchain-block-model')
+
 let tokenChainTransModel = require('./model/tokenchain-trans-model')
 let txBlockModel = require('./model/transactionchain-block-model')
 let txTransModel = require('./model/transactionchain-trans-model')
