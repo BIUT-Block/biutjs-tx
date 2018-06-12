@@ -1,9 +1,9 @@
 {
-  "name": "secjs-tx",
-  "version": "0.1.4",
+  "name": "@secjs-block/secjs-tx",
+  "version": "0.1.5",
   "description": "Transaction chain and token chain model handler",
   "bugs": {
-    "url": "https://github.com/SECblock/secjs-tx.git/issues"
+    "url": "https://github.com/SEC-block/secjs-tx.git/issues"
   },
   "author": "Fei Minhao",
   "license": "MIT",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/SECblock/secjs-tx.git"
+    "url": "https://github.com/SEC-block/secjs-tx.git"
   },
   "keywords": [
     "secjs-tx"
@@ -32,7 +32,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "homepage": "https://github.com/FeiMinhao/secjs-tx#readme",
+  "homepage": "https://github.com/SEC-block/secjs-tx#readme",
   "directories": {
     "lib": "lib"
   }
