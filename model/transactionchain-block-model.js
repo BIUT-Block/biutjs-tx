@@ -2,22 +2,16 @@
  * define of transaction chain block model
  */
 var transactionChainBlockModel = {
-  Height: '',
+  Number: '',
+  TransactionsRoot: '',
+  ReceiptRoot: '',
   TimeStamp: '',
-  Transactions: '',
-  Hash: '',
-  Parent_Hash: '',
-  // Sha3Uncles: "",
-  Mined_By: '',
-  // Difficulty: "",
-  // Total_Difficulty: "",
-  Size: '',
-  // Gas_Used: "",
-  // Gas_Limit: "",
+  ParentHash: '',
+  ExtraData: '',
   Nonce: '',
-  Block_Reward: '', // do we need reward in transactionchain??
-  // Uncles_Reward: "",
-  Extra_Data: ''
+  Beneficiary: '',
+  Hash: '',
+  Transactions: ''
 }
 
 module.exports = transactionChainBlockModel
