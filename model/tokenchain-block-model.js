@@ -9,15 +9,15 @@ let tokenchainBlockModel = {
   MixHash: '',
   StateRoot: '',
   TimeStamp: '',
-  Transactions: '',
   ParentHash: '',
-  Beneficiary: '',
   Difficulty: '',
   GasUsed: '',
   GasLimit: '',
   ExtraData: '',
   Nonce: '',
-  Hash: ''
+  Beneficiary: '',
+  Hash: '',
+  Transactions: ''
 }
 
 module.exports = tokenchainBlockModel
