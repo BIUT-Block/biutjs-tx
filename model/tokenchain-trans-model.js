@@ -3,17 +3,17 @@
  */
 let tokenchainTransModel = {
   TxHash: '',
-  TxReceiptStatus: '', // token processing status: pending, success, error
+  TxReceiptStatus: '',
   Version: '',
-  BlockHeight: '',
+  TxHeight: '',
   TimeStamp: '',
   TxFrom: '',
   TxTo: '',
   Value: '',
-  GasLimit: '', // Do we need actually?
-  GasUsedByTxn: '', // Do we need actually?
-  GasPrice: '', // Do we need actually?
-  TxFee: '', // Do we need actually? TxFee = GasUsedByTxn x GasPrice
+  GasLimit: '',
+  GasUsedByTxn: '',
+  GasPrice: '',
+  TxFee: '',
   Nonce: '',
   InputData: ''
 }

@@ -5,8 +5,8 @@ let params = {
   type: ''
 }
 
-test('token chain block tester ', (t) => {
-  params.type = 'tokenchain-block'
+test('token chain tx tester ', (t) => {
+  params.type = 'tokenchain-tx'
   let instance = new SECjsTx(params).getInstance()
   t.ok(instance)
   let model = instance.getModel()

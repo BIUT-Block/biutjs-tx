@@ -6,7 +6,7 @@ let transactionchainTransModel = {
   TxHash: '',
   TxReceiptStatus: '',
   Version: '',
-  BlockHeight: '',
+  TxHeight: '',
   TimeStamp: '',
   SellerAddress: '',
   BuyerAddress: '',

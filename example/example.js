@@ -1,9 +1,9 @@
 const SECjsTX = require('../index')
 
 let params = {
-  type: 'tokenchain-block'
+  type: 'tokenchain-tx'
 }
 let instanceHandler = new SECjsTX(params)
-let tokenChainBlockModel = instanceHandler.getInstance().getModel()
+let tokenChainTxModel = instanceHandler.getInstance().getModel()
 
-console.log(tokenChainBlockModel)
+console.log(tokenChainTxModel)
