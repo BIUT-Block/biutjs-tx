@@ -71,6 +71,10 @@ class SECTokenTx {
       Buffer.from(this.tx.InputData)
     ]
   }
+
+  getTxHash() {
+    return this.util.rlphash(this.txBuffer).toString('hex')
+  }
 }
 
 module.exports = SECTokenTx
