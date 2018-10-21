@@ -10,9 +10,8 @@
   "main": "index.js",
   "files": [
     "index.js",
-    "model",
-    "lib",
-    "LICENSE"
+    "src",
+    "model"
   ],
   "repository": {
     "type": "git",
