@@ -6,7 +6,6 @@ let transactionchainTransModel = {
   TxHash: '',
   TxReceiptStatus: '',
   Version: '',
-  TxHeight: '',
   TimeStamp: '',
   SellerAddress: '',
   BuyerAddress: '',
@@ -27,7 +26,8 @@ let transactionchainTransModel = {
   },
   SharedTimes: 0,
   Status: '',
-  InputData: ''
+  InputData: '',
+  TxHeight: ''
 }
 
 module.exports = transactionchainTransModel

@@ -1,4 +1,4 @@
-const SECUtil = require('@sec-tx/secjs-util')
+const SECUtil = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
 
 class SECTokenTx {
@@ -32,16 +32,16 @@ class SECTokenTx {
   setTxFromBuffer (txBuffer) {
     this.txBuffer = txBuffer.slice(0)
     this.tx.TxHash = txBuffer[0].toString('hex')
-    this.tx.TxReceiptStatus = txBuffer[1].toString('hex')
-    this.tx.Version = txBuffer[2].toString('hex')
-    this.tx.TimeStamp = this.util.BufferToInt(txBuffer[3])
+    this.tx.TxReceiptStatus = txBuffer[1].toString()
+    this.tx.Version = txBuffer[2].toString()
+    this.tx.TimeStamp = this.util.bufferToInt(txBuffer[3])
     this.tx.TxFrom = txBuffer[4].toString('hex')
     this.tx.TxTo = txBuffer[5].toString('hex')
-    this.tx.Value = txBuffer[6].toString('hex')
-    this.tx.GasLimit = txBuffer[7].toString('hex')
-    this.tx.GasUsedByTxn = txBuffer[8].toString('hex')
-    this.tx.GasPrice = txBuffer[9].toString('hex')
-    this.tx.TxFee = txBuffer[10].toString('hex')
+    this.tx.Value = txBuffer[6].toString()
+    this.tx.GasLimit = txBuffer[7].toString()
+    this.tx.GasUsedByTxn = txBuffer[8].toString()
+    this.tx.GasPrice = txBuffer[9].toString()
+    this.tx.TxFee = txBuffer[10].toString()
     this.tx.Nonce = txBuffer[11].toString('hex')
     this.tx.InputData = txBuffer[12].toString()
   }
@@ -50,23 +50,23 @@ class SECTokenTx {
     * assign value to tx
     */
   _generateTx () {
-    this.tx.TxHash = this.util.rlphash(this.txBuffer).toString('hex')
+    this.tx = this.config
     this._generateTxBuffer()
   }
 
   _generateTxBuffer () {
     this.txBuffer = [
       Buffer.from(this.tx.TxHash, 'hex'),
-      Buffer.from(this.tx.TxReceiptStatus, 'hex'),
-      Buffer.from(this.tx.Version, 'hex'),
+      Buffer.from(this.tx.TxReceiptStatus),
+      Buffer.from(this.tx.Version),
       this.util.intToBuffer(this.tx.TimeStamp),
       Buffer.from(this.tx.TxFrom, 'hex'),
       Buffer.from(this.tx.TxTo, 'hex'),
-      Buffer.from(this.tx.Value, 'hex'),
-      Buffer.from(this.tx.GasLimit, 'hex'),
-      Buffer.from(this.tx.GasUsedByTxn, 'hex'),
-      Buffer.from(this.tx.GasPrice, 'hex'),
-      Buffer.from(this.tx.TxFee, 'hex'),
+      Buffer.from(this.tx.Value),
+      Buffer.from(this.tx.GasLimit),
+      Buffer.from(this.tx.GasUsedByTxn),
+      Buffer.from(this.tx.GasPrice),
+      Buffer.from(this.tx.TxFee),
       Buffer.from(this.tx.Nonce, 'hex'),
       Buffer.from(this.tx.InputData)
     ]

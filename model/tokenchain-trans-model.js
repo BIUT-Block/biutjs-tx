@@ -5,7 +5,6 @@ let tokenchainTransModel = {
   TxHash: '',
   TxReceiptStatus: '',
   Version: '',
-  TxHeight: '',
   TimeStamp: '',
   TxFrom: '',
   TxTo: '',
@@ -15,7 +14,8 @@ let tokenchainTransModel = {
   GasPrice: '',
   TxFee: '',
   Nonce: '',
-  InputData: ''
+  InputData: '',
+  TxHeight: ''
 }
 
 module.exports = tokenchainTransModel
