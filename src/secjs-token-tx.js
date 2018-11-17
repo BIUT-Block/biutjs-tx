@@ -1,18 +1,19 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
 
+const util = new SECUtil()
+
 class SECTokenTx {
   /**
     * create a transaction chain tx with config
     * @param {*} config
     */
-  constructor (config = {}) {
-    this.config = config
-    this.tx = SECTokenTxModel
+  constructor (tx = {}) {
     this.txBuffer = []
-    this.util = new SECUtil()
-    if (Object.keys(config).length !== 0) {
-      this._generateTx()
+    this.tx = SECTokenTxModel
+
+    if (Object.keys(tx).length !== 0) {
+      this.setTx(tx)
     }
   }
 
@@ -25,16 +26,59 @@ class SECTokenTx {
   }
 
   setTx (tx) {
-    this.tx = Object.assign({}, tx)
-    this._generateTxBuffer()
+    if (!(Array.isArray(tx))) {
+      // set tx from json data
+      this._setTxFromJson(tx)
+    } else {
+      // set tx from txBuffer data
+      this._setTxFromBuffer(tx)
+    }
   }
 
-  setTxFromBuffer (txBuffer) {
-    this.txBuffer = txBuffer.slice(0)
+  _setTxFromJson (tx) {
+    // clear this.tx
+    this.tx = SECTokenTxModel
+
+    // set this.tx
+    Object.keys(tx).forEach(function (key) {
+      if (!(key in tx)) {
+        throw new Error(`transaction object key ${key} is not recognized`)
+      }
+      this.tx.key = tx.key
+    })
+
+    // set txBuffer
+    this.txBuffer = [
+      Buffer.from(this.tx.TxHash, 'hex'),
+      Buffer.from(this.tx.TxReceiptStatus),
+      Buffer.from(this.tx.Version),
+      util.intToBuffer(this.tx.TimeStamp),
+      Buffer.from(this.tx.TxFrom, 'hex'),
+      Buffer.from(this.tx.TxTo, 'hex'),
+      Buffer.from(this.tx.Value),
+      Buffer.from(this.tx.GasLimit),
+      Buffer.from(this.tx.GasUsedByTxn),
+      Buffer.from(this.tx.GasPrice),
+      Buffer.from(this.tx.TxFee),
+      Buffer.from(this.tx.Nonce, 'hex'),
+      Buffer.from(this.tx.InputData),
+      Buffer.from(this.tx.Signature)
+    ]
+  }
+
+  _setTxFromBuffer (txBuffer) {
+    // clear this.tx
+    this.tx = SECTokenTxModel
+
+    if (txBuffer.length !== Object.keys(this.tx).length) {
+      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: (${Object.keys(this.tx).length})`)
+    }
+
+    // set this.tx
     this.tx.TxHash = txBuffer[0].toString('hex')
     this.tx.TxReceiptStatus = txBuffer[1].toString()
     this.tx.Version = txBuffer[2].toString()
-    this.tx.TimeStamp = this.util.bufferToInt(txBuffer[3])
+    this.tx.TimeStamp = util.bufferToInt(txBuffer[3])
     this.tx.TxFrom = txBuffer[4].toString('hex')
     this.tx.TxTo = txBuffer[5].toString('hex')
     this.tx.Value = txBuffer[6].toString()
@@ -44,36 +88,14 @@ class SECTokenTx {
     this.tx.TxFee = txBuffer[10].toString()
     this.tx.Nonce = txBuffer[11].toString('hex')
     this.tx.InputData = txBuffer[12].toString()
+    this.tx.Signature = txBuffer[13].toString()
+
+    // set this.txBuffer
+    this.txBuffer = txBuffer
   }
 
-  /**
-    * assign value to tx
-    */
-  _generateTx () {
-    this.tx = this.config
-    this._generateTxBuffer()
-  }
-
-  _generateTxBuffer () {
-    this.txBuffer = [
-      Buffer.from(this.tx.TxHash, 'hex'),
-      Buffer.from(this.tx.TxReceiptStatus),
-      Buffer.from(this.tx.Version),
-      this.util.intToBuffer(this.tx.TimeStamp),
-      Buffer.from(this.tx.TxFrom, 'hex'),
-      Buffer.from(this.tx.TxTo, 'hex'),
-      Buffer.from(this.tx.Value),
-      Buffer.from(this.tx.GasLimit),
-      Buffer.from(this.tx.GasUsedByTxn),
-      Buffer.from(this.tx.GasPrice),
-      Buffer.from(this.tx.TxFee),
-      Buffer.from(this.tx.Nonce, 'hex'),
-      Buffer.from(this.tx.InputData)
-    ]
-  }
-
-  getTxHash() {
-    return this.util.rlphash(this.txBuffer).toString('hex')
+  getTxHash () {
+    return util.rlphash(this.txBuffer).toString('hex')
   }
 }
 

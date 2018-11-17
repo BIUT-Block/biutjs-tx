@@ -15,6 +15,7 @@ let tokenchainTransModel = {
   TxFee: '',
   Nonce: '',
   InputData: '',
+  Signature: '',
   TxHeight: ''
 }
 
