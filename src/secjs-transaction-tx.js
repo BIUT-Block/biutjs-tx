@@ -69,8 +69,8 @@ class SECTransactionTx {
     // clear this.tx
     this.tx = SECTransactionTxModel
 
-    if (txBuffer.length !== Object.keys(this.tx).length - 1) {
-      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: (${Object.keys(this.tx).length})`)
+    if (txBuffer.length !== 12) {
+      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: 12`)
     }
 
     // set this.tx
