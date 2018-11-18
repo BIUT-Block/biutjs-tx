@@ -42,7 +42,7 @@ class SECTokenTx {
     // set this.tx
     Object.keys(tx).forEach(function (key) {
       if (!(key in tx)) {
-        throw new Error(`transaction object key ${key} is not recognized`)
+        throw new Error(`key: ${key} is not recognized`)
       }
       this.tx.key = tx.key
     })
@@ -70,7 +70,7 @@ class SECTokenTx {
     // clear this.tx
     this.tx = SECTokenTxModel
 
-    if (txBuffer.length !== Object.keys(this.tx).length) {
+    if (txBuffer.length !== Object.keys(this.tx).length - 1) {
       throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: (${Object.keys(this.tx).length})`)
     }
 
