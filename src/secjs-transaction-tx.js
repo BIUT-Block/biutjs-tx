@@ -36,6 +36,7 @@ class SECTransactionTx {
   }
 
   _setTxFromJson (tx) {
+    let self = this
     // clear this.tx
     this.tx = SECTransactionTxModel
 
@@ -44,7 +45,7 @@ class SECTransactionTx {
       if (!(key in tx)) {
         throw new Error(`key: ${key} is not recognized`)
       }
-      this.tx.key = tx.key
+      self.tx.key = tx.key
     })
 
     // set this.txBuffer
