@@ -36,6 +36,8 @@ class SECTokenTx {
   }
 
   _setTxFromJson (tx) {
+    let self = this
+
     // clear this.tx
     this.tx = SECTokenTxModel
 
@@ -44,10 +46,10 @@ class SECTokenTx {
       if (!(key in tx)) {
         throw new Error(`key: ${key} is not recognized`)
       }
-      this.tx.key = tx.key
+      self.tx.key = tx.key
     })
 
-    // set txBuffer
+    // set this.txBuffer
     this.txBuffer = [
       Buffer.from(this.tx.TxHash, 'hex'),
       Buffer.from(this.tx.TxReceiptStatus),

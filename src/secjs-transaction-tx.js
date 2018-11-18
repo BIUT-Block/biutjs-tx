@@ -35,32 +35,6 @@ class SECTransactionTx {
     }
   }
 
-  _setTxFromBuffer (txBuffer) {
-    // clear this.tx
-    this.tx = SECTransactionTxModel
-
-    if (txBuffer.length !== Object.keys(this.tx).length - 1) {
-      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: (${Object.keys(this.tx).length})`)
-    }
-
-    // set this.tx
-    this.tx.TxHash = txBuffer[0].toString('hex')
-    this.tx.TxReceiptStatus = txBuffer[1].toString()
-    this.tx.Version = txBuffer[2].toString()
-    this.tx.TimeStamp = util.bufferToInt(txBuffer[3])
-    this.tx.SellerAddress = txBuffer[4].toString()
-    this.tx.BuyerAddress = txBuffer[5].toString()
-    this.tx.ShareHash = txBuffer[6].toString()
-    this.tx.ShareTimeStamp = util.bufferToInt(txBuffer[7])
-    this.tx.ProductInfo = JSON.parse(txBuffer[8].toString())
-    this.tx.SharedTimes = util.bufferToInt(txBuffer[9])
-    this.tx.Status = txBuffer[10].toString()
-    this.tx.InputData = txBuffer[11].toString()
-
-    // set this.txBuffer
-    this.txBuffer = txBuffer
-  }
-
   _setTxFromJson (tx) {
     // clear this.tx
     this.tx = SECTransactionTxModel
@@ -88,6 +62,32 @@ class SECTransactionTx {
       Buffer.from(this.tx.Status),
       Buffer.from(this.tx.InputData)
     ]
+  }
+
+  _setTxFromBuffer (txBuffer) {
+    // clear this.tx
+    this.tx = SECTransactionTxModel
+
+    if (txBuffer.length !== Object.keys(this.tx).length - 1) {
+      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: (${Object.keys(this.tx).length})`)
+    }
+
+    // set this.tx
+    this.tx.TxHash = txBuffer[0].toString('hex')
+    this.tx.TxReceiptStatus = txBuffer[1].toString()
+    this.tx.Version = txBuffer[2].toString()
+    this.tx.TimeStamp = util.bufferToInt(txBuffer[3])
+    this.tx.SellerAddress = txBuffer[4].toString()
+    this.tx.BuyerAddress = txBuffer[5].toString()
+    this.tx.ShareHash = txBuffer[6].toString()
+    this.tx.ShareTimeStamp = util.bufferToInt(txBuffer[7])
+    this.tx.ProductInfo = JSON.parse(txBuffer[8].toString())
+    this.tx.SharedTimes = util.bufferToInt(txBuffer[9])
+    this.tx.Status = txBuffer[10].toString()
+    this.tx.InputData = txBuffer[11].toString()
+
+    // set this.txBuffer
+    this.txBuffer = txBuffer
   }
 
   getTxHash () {
