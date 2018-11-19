@@ -61,7 +61,7 @@ class SECTokenTx {
       Buffer.from(this.tx.GasLimit),
       Buffer.from(this.tx.GasUsedByTxn),
       Buffer.from(this.tx.GasPrice),
-      Buffer.from(this.tx.TxFee),
+      util.intToBuffer(this.tx.TxFee),
       Buffer.from(this.tx.Nonce, 'hex'),
       Buffer.from(this.tx.InputData),
       Buffer.from(this.tx.Signature)
@@ -87,7 +87,7 @@ class SECTokenTx {
     this.tx.GasLimit = txBuffer[7].toString()
     this.tx.GasUsedByTxn = txBuffer[8].toString()
     this.tx.GasPrice = txBuffer[9].toString()
-    this.tx.TxFee = txBuffer[10].toString()
+    this.tx.TxFee = util.bufferToInt(txBuffer[10])
     this.tx.Nonce = txBuffer[11].toString('hex')
     this.tx.InputData = txBuffer[12].toString()
     this.tx.Signature = txBuffer[13].toString()
