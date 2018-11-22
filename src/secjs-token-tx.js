@@ -3,6 +3,8 @@ const SECTokenTxModel = require('../model/tokenchain-trans-model')
 
 const util = new SECUtil()
 
+const TX_VERSION = 0.1
+
 class SECTokenTx {
   /**
     * create a transaction chain tx with config
@@ -26,12 +28,16 @@ class SECTokenTx {
   }
 
   setTx (tx) {
-    if (!(Array.isArray(tx))) {
-      // set tx from json data
-      this._setTxFromJson(tx)
-    } else {
-      // set tx from txBuffer data
-      this._setTxFromBuffer(tx)
+    try {
+      if (!(Array.isArray(tx))) {
+        // set tx from json data
+        this._setTxFromJson(tx)
+      } else {
+        // set tx from txBuffer data
+        this._setTxFromBuffer(tx)
+      }
+    } catch (err) {
+      throw Error(`Error ${err} occurs when set transaction object`)
     }
   }
 
@@ -48,23 +54,26 @@ class SECTokenTx {
       }
       self.tx.key = tx.key
     })
-    if (this.tx.TxHash === '') {
-      let hashInfo = {
-        Version: this.tx.Version,
-        TimeStamp: this.tx.TimeStamp,
-        TxFrom: this.tx.TxFrom,
-        TxTo: this.tx.TxTo,
-        Value: this.tx.Value,
-        GasLimit: this.tx.GasLimit,
-        GasUsedByTxn: this.tx.GasUsedByTxn,
-        GasPrice: this.tx.GasPrice,
-        Nonce: this.tx.Nonce,
-        InputData: this.tx.InputData,
-        Signature: this.tx.Signature
-      }
-      this.tx.TxHash = util.rlphash(hashInfo).toString('hex')
-    }
 
+    // calculate transaction hash
+    let hashInfo = {
+      Version: TX_VERSION,
+
+      // from client
+      TimeStamp: this.tx.TimeStamp,
+      TxFrom: this.tx.TxFrom,
+      TxTo: this.tx.TxTo,
+      Value: this.tx.Value,
+      InputData: this.tx.InputData,
+      Signature: this.tx.Signature,
+
+      // from main process
+      GasLimit: this.tx.GasLimit,
+      GasUsedByTxn: this.tx.GasUsedByTxn,
+      GasPrice: this.tx.GasPrice,
+      Nonce: this.tx.Nonce
+    }
+    this.tx.TxHash = util.rlphash(hashInfo).toString('hex')
     this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
 
     // set this.txBuffer
@@ -84,9 +93,6 @@ class SECTokenTx {
       Buffer.from(this.tx.InputData),
       Buffer.from(this.tx.Signature)
     ]
-    if ((this.tx.TxReceiptStatus !== '') || (this.tx.TxReceiptStatus !== 'Pending')) {
-      throw new Error('Invalid or Wrong Transaction Status')
-    }
   }
 
   _setTxFromBuffer (txBuffer) {
@@ -98,7 +104,7 @@ class SECTokenTx {
     }
 
     // set this.tx
-    // this.tx.TxHash = txBuffer[0].toString('hex')
+    this.tx.TxHash = txBuffer[0].toString('hex')
     this.tx.TxReceiptStatus = txBuffer[1].toString()
     this.tx.Version = txBuffer[2].toString()
     this.tx.TimeStamp = util.bufferToInt(txBuffer[3])
@@ -108,46 +114,22 @@ class SECTokenTx {
     this.tx.GasLimit = txBuffer[7].toString()
     this.tx.GasUsedByTxn = txBuffer[8].toString()
     this.tx.GasPrice = txBuffer[9].toString()
-    // this.tx.TxFee = util.bufferToInt(txBuffer[10])
-    this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
+    this.tx.TxFee = util.bufferToInt(txBuffer[10])
     this.tx.Nonce = txBuffer[11].toString('hex')
     this.tx.InputData = txBuffer[12].toString()
     this.tx.Signature = txBuffer[13].toString()
 
-    if (txBuffer[0].length === 0) {
-      let hashInfo = {
-        Version: this.tx.Version,
-        TimeStamp: this.tx.TimeStamp,
-        TxFrom: this.tx.TxFrom,
-        TxTo: this.tx.TxTo,
-        Value: this.tx.Value,
-        GasLimit: this.tx.GasLimit,
-        GasUsedByTxn: this.tx.GasUsedByTxn,
-        GasPrice: this.tx.GasPrice,
-        Nonce: this.tx.Nonce,
-        InputData: this.tx.InputData,
-        Signature: this.tx.Signature
-      }
-      this.tx.TxHash = util.rlphash(hashInfo).toString('hex')
-    } else {
-      this.tx.TxHash = txBuffer[0].toString('hex')
-    }
-
-    if ((this.tx.TxReceiptStatus !== '') || (this.tx.TxReceiptStatus !== 'Pending')) {
-      throw new Error('Invalid or Wrong Transaction Status')
-    }
     // set this.txBuffer
     this.txBuffer = txBuffer
   }
 
   getTxHash () {
-    return util.rlphash(this.txBuffer).toString('hex')
+    if (this.tx.TxHash !== '') {
+      return this.tx.TxHash
+    } else {
+      throw Error('transaction hash not defined')
+    }
   }
-
-  getTxFee () {
-    return parseInt(this.GasUsedByTxn) * parseInt(this.GasPrice)
-  }
-
 }
 
 module.exports = SECTokenTx
