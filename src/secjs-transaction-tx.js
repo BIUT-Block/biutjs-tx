@@ -1,8 +1,6 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTransactionTxModel = require('../model/transactionchain-trans-model')
 
-const util = new SECUtil()
-
 class SECTransactionTx {
   /**
     * create a transaction chain tx with config
@@ -53,13 +51,13 @@ class SECTransactionTx {
       Buffer.from(this.tx.TxHash, 'hex'),
       Buffer.from(this.tx.TxReceiptStatus),
       Buffer.from(this.tx.Version),
-      util.intToBuffer(this.tx.TimeStamp),
+      SECUtil.intToBuffer(this.tx.TimeStamp),
       Buffer.from(this.tx.SellerAddress),
       Buffer.from(this.tx.BuyerAddress),
       Buffer.from(this.tx.ShareHash),
-      util.intToBuffer(this.tx.ShareTimeStamp),
+      SECUtil.intToBuffer(this.tx.ShareTimeStamp),
       Buffer.from(JSON.stringify(this.tx.ProductInfo)),
-      util.intToBuffer(this.tx.SharedTimes),
+      SECUtil.intToBuffer(this.tx.SharedTimes),
       Buffer.from(this.tx.Status),
       Buffer.from(this.tx.InputData)
     ]
@@ -77,13 +75,13 @@ class SECTransactionTx {
     this.tx.TxHash = txBuffer[0].toString('hex')
     this.tx.TxReceiptStatus = txBuffer[1].toString()
     this.tx.Version = txBuffer[2].toString()
-    this.tx.TimeStamp = util.bufferToInt(txBuffer[3])
+    this.tx.TimeStamp = SECUtil.bufferToInt(txBuffer[3])
     this.tx.SellerAddress = txBuffer[4].toString()
     this.tx.BuyerAddress = txBuffer[5].toString()
     this.tx.ShareHash = txBuffer[6].toString()
-    this.tx.ShareTimeStamp = util.bufferToInt(txBuffer[7])
+    this.tx.ShareTimeStamp = SECUtil.bufferToInt(txBuffer[7])
     this.tx.ProductInfo = JSON.parse(txBuffer[8].toString())
-    this.tx.SharedTimes = util.bufferToInt(txBuffer[9])
+    this.tx.SharedTimes = SECUtil.bufferToInt(txBuffer[9])
     this.tx.Status = txBuffer[10].toString()
     this.tx.InputData = txBuffer[11].toString()
 
@@ -92,7 +90,7 @@ class SECTransactionTx {
   }
 
   getTxHash () {
-    return util.rlphash(this.txBuffer).toString('hex')
+    return SECUtil.rlphash(this.txBuffer).toString('hex')
   }
 }
 
