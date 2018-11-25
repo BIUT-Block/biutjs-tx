@@ -26,16 +26,12 @@ class SECTokenTx {
   }
 
   setTx (tx) {
-    try {
-      if (!(Array.isArray(tx))) {
-        // set tx from json data
-        this._setTxFromJson(tx)
-      } else {
-        // set tx from txBuffer data
-        this._setTxFromBuffer(tx)
-      }
-    } catch (err) {
-      throw Error(`Error ${err} occurs when set transaction object`)
+    if (!(Array.isArray(tx))) {
+      // set tx from json data
+      this._setTxFromJson(tx)
+    } else {
+      // set tx from txBuffer data
+      this._setTxFromBuffer(tx)
     }
   }
 
@@ -53,32 +49,9 @@ class SECTokenTx {
       self.tx.key = tx.key
     })
 
-    // calculate transaction hash
-    let hashInfo = {
-      Version: TX_VERSION,
-
-      // from client
-      TimeStamp: this.tx.TimeStamp,
-      TxFrom: this.tx.TxFrom,
-      TxTo: this.tx.TxTo,
-      Value: this.tx.Value,
-      InputData: this.tx.InputData,
-      Signature: this.tx.Signature,
-
-      // from main process
-      GasLimit: this.tx.GasLimit,
-      GasUsedByTxn: this.tx.GasUsedByTxn,
-      GasPrice: this.tx.GasPrice,
-      Nonce: this.tx.Nonce
-    }
-    this.tx.TxHash = SECUtil.rlphash(hashInfo).toString('hex')
-    this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
-
     // set this.txBuffer
     this.txBuffer = [
-      Buffer.from(this.tx.TxHash, 'hex'),
-      Buffer.from(this.tx.TxReceiptStatus),
-      Buffer.from(this.tx.Version),
+      Buffer.from(TX_VERSION),
       SECUtil.intToBuffer(this.tx.TimeStamp),
       Buffer.from(this.tx.TxFrom, 'hex'),
       Buffer.from(this.tx.TxTo, 'hex'),
@@ -86,11 +59,14 @@ class SECTokenTx {
       Buffer.from(this.tx.GasLimit),
       Buffer.from(this.tx.GasUsedByTxn),
       Buffer.from(this.tx.GasPrice),
-      SECUtil.intToBuffer(this.tx.TxFee),
       Buffer.from(this.tx.Nonce, 'hex'),
       Buffer.from(this.tx.InputData),
       Buffer.from(this.tx.Signature)
     ]
+    this.tx.TxHash = SECUtil.rlphash(this.txBuffer).toString('hex')
+    this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
+    // this.TxReceiptStatus
+    // this.TxHeight
   }
 
   _setTxFromBuffer (txBuffer) {
@@ -102,20 +78,20 @@ class SECTokenTx {
     }
 
     // set this.tx
-    this.tx.TxHash = txBuffer[0].toString('hex')
-    this.tx.TxReceiptStatus = txBuffer[1].toString()
-    this.tx.Version = txBuffer[2].toString()
-    this.tx.TimeStamp = SECUtil.bufferToInt(txBuffer[3])
-    this.tx.TxFrom = txBuffer[4].toString('hex')
-    this.tx.TxTo = txBuffer[5].toString('hex')
-    this.tx.Value = SECUtil.bufferToInt(txBuffer[6])
-    this.tx.GasLimit = txBuffer[7].toString()
-    this.tx.GasUsedByTxn = txBuffer[8].toString()
-    this.tx.GasPrice = txBuffer[9].toString()
-    this.tx.TxFee = SECUtil.bufferToInt(txBuffer[10])
-    this.tx.Nonce = txBuffer[11].toString('hex')
-    this.tx.InputData = txBuffer[12].toString()
-    this.tx.Signature = txBuffer[13].toString()
+    this.tx.Version = txBuffer[0].toString()
+    this.tx.TimeStamp = SECUtil.bufferToInt(txBuffer[1])
+    this.tx.TxFrom = txBuffer[2].toString('hex')
+    this.tx.TxTo = txBuffer[3].toString('hex')
+    this.tx.Value = SECUtil.bufferToInt(txBuffer[4])
+    this.tx.GasLimit = txBuffer[5].toString()
+    this.tx.GasUsedByTxn = txBuffer[6].toString()
+    this.tx.GasPrice = txBuffer[7].toString()
+    this.tx.Nonce = txBuffer[8].toString('hex')
+    this.tx.InputData = txBuffer[9].toString()
+    this.tx.Signature = txBuffer[10].toString()
+
+    this.tx.TxHash = SECUtil.rlphash(txBuffer).toString('hex')
+    this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
 
     // set this.txBuffer
     this.txBuffer = txBuffer
