@@ -73,8 +73,8 @@ class SECTokenTx {
     // clear this.tx
     this.tx = SECTokenTxModel
 
-    if (txBuffer.length !== 14) {
-      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: 14`)
+    if (txBuffer.length !== 11) {
+      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: 11`)
     }
 
     // set this.tx
