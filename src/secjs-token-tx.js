@@ -1,7 +1,7 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
 
-const TX_VERSION = 0.1
+const TX_VERSION = '0.1'
 
 class SECTokenTx {
   /**
