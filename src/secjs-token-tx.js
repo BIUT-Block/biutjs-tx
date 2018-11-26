@@ -1,7 +1,5 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
-// const BN = SECUtil.BN
-// const N_DIV_2 = new BN('7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0', 16)
 
 const TX_VERSION = '0.1'
 
