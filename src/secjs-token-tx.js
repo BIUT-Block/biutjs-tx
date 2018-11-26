@@ -61,7 +61,7 @@ class SECTokenTx {
       Buffer.from(this.tx.GasPrice),
       Buffer.from(this.tx.Nonce, 'hex'),
       Buffer.from(this.tx.InputData),
-      Buffer.from(this.tx.Signature)
+      Buffer.from(JSON.stringify(this.tx.Signature))
     ]
     this.tx.TxHash = SECUtil.rlphash(this.txBuffer).toString('hex')
     this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
@@ -88,7 +88,7 @@ class SECTokenTx {
     this.tx.GasPrice = txBuffer[7].toString()
     this.tx.Nonce = txBuffer[8].toString('hex')
     this.tx.InputData = txBuffer[9].toString()
-    this.tx.Signature = txBuffer[10].toString()
+    this.tx.Signature = JSON.parse(txBuffer[10].toString())
 
     this.tx.TxHash = SECUtil.rlphash(txBuffer).toString('hex')
     this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
