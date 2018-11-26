@@ -80,23 +80,35 @@ class SECTokenTx {
     }
 
     // set this.tx
-    this.tx.Version = txBuffer[0].toString()
-    this.tx.TimeStamp = SECUtil.bufferToInt(txBuffer[1])
-    this.tx.TxFrom = txBuffer[2].toString('hex')
-    this.tx.TxTo = txBuffer[3].toString('hex')
-    this.tx.Value = SECUtil.bufferToInt(txBuffer[4])
-    this.tx.GasLimit = txBuffer[5].toString()
-    this.tx.GasUsedByTxn = txBuffer[6].toString()
-    this.tx.GasPrice = txBuffer[7].toString()
-    this.tx.Nonce = txBuffer[8].toString('hex')
-    this.tx.InputData = txBuffer[9].toString()
-    this.tx.Signature = JSON.parse(txBuffer[10].toString())
+    this.tx = {
+      Version: txBuffer[0].toString(),
+      TimeStamp: SECUtil.bufferToInt(txBuffer[1]),
+      TxFrom: txBuffer[2].toString('hex'),
+      TxTo: txBuffer[3].toString('hex'),
+      Value: SECUtil.bufferToInt(txBuffer[4]),
+      GasLimit: txBuffer[5].toString(),
+      GasUsedByTxn: txBuffer[6].toString(),
+      GasPrice: txBuffer[7].toString(),
+      Nonce: txBuffer[8].toString('hex'),
+      InputData: txBuffer[9].toString(),
+      Signature: JSON.parse(txBuffer[10].toString())
+    }
 
     this.tx.TxHash = SECUtil.rlphash(txBuffer).toString('hex')
     this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
 
     // set this.txBuffer
     this.txBuffer = txBuffer
+  }
+
+  // used for transaction signature
+  _generateMsgHash () {
+    if (this.txBuffer.length !== 11) {
+      throw new Error(`_generateMsgHash: input txBuffer length(${this.txBuffer.length}) mismatch, its length should be: 11`)
+    }
+
+    this.msgBuffer = this.txBuffer.slice(0, this.txBuffer.length - 1)
+    this.msgHash = SECUtil.rlphash(this.msgBuffer).toString('hex')
   }
 
   getTxHash () {
