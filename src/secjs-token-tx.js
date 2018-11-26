@@ -1,5 +1,7 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
+const BN = SECUtil.BN
+const N_DIV_2 = new BN('7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0', 16)
 
 const TX_VERSION = '0.1'
 
@@ -103,6 +105,26 @@ class SECTokenTx {
     } else {
       throw Error('transaction hash not defined')
     }
+  }
+
+  verifySignature () {
+    const msgHash = this.hash(false)
+    // All transaction signatures whose s-value is greater than secp256k1n/2 are considered invalid.
+    if (this._homestead && new BN(this.s).cmp(N_DIV_2) === 1) {
+      return false
+    }
+
+    try {
+      let v = SECUtil.bufferToInt(this.v)
+      if (this._chainId > 0) {
+        v -= this._chainId * 2 + 8
+      }
+      this._senderPubKey = SECUtil.ecrecover(msgHash, v, this.r, this.s)
+    } catch (e) {
+      return false
+    }
+
+    return !!this._senderPubKey
   }
 }
 
