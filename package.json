@@ -21,7 +21,7 @@
     "secjs-tx"
   ],
   "dependencies": {
-    "@sec-block/secjs-util": "^1.1.15",
+    "@sec-block/secjs-util": "^1.1.19",
     "yargs": "^3.15.0"
   },
   "devDependencies": {
