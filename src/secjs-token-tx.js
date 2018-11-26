@@ -127,12 +127,18 @@ class SECTokenTx {
     try {
       let v = SECUtil.bufferToInt(this.tx.Signature.v)
 
-      this._senderPubKey = SECUtil.ecrecover(msgHashBuffer, v, this.tx.Signature.r, this.tx.Signature.r)
+      this._senderPubKey = SECUtil.ecrecover(msgHashBuffer, v, this.tx.Signature.r, this.tx.Signature.s)
     } catch (e) {
       return false
     }
-
-    return !!this._senderPubKey
+    let _senderPubKeyBuffer = Buffer.from(this._senderPubKey, 'hex')
+    let addressBuffer = SECUtil.publicToAddress(_senderPubKeyBuffer)
+    let address = addressBuffer.toString('hex')
+    if (address !== this.tx.TxFrom) {
+      return false
+    } else {
+      return true
+    }
   }
 }
 
