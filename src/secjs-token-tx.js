@@ -1,5 +1,6 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
+const BN = require('bn.js')
 
 const TX_VERSION = '0.1'
 
@@ -55,16 +56,19 @@ class SECTokenTx {
       SECUtil.intToBuffer(this.tx.TimeStamp),
       Buffer.from(this.tx.TxFrom, 'hex'),
       Buffer.from(this.tx.TxTo, 'hex'),
-      SECUtil.intToBuffer(this.tx.Value),
+      Buffer.from(this.tx.Value),
       Buffer.from(this.tx.GasLimit),
       Buffer.from(this.tx.GasUsedByTxn),
       Buffer.from(this.tx.GasPrice),
-      Buffer.from(this.tx.Nonce, 'hex'),
+      Buffer.from(this.tx.Nonce),
       Buffer.from(this.tx.InputData),
       Buffer.from(JSON.stringify(this.tx.Signature))
     ]
     this.tx.TxHash = SECUtil.rlphash(this.txBuffer).toString('hex')
-    this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
+
+    let bnGasPrice = new BN(this.tx.GasPrice, 10)
+    let bnGasUsed = new BN(this.tx.GasUsedByTxn, 10)
+    this.tx.TxFee = bnGasPrice.mul(bnGasUsed).toString()
     // this.TxReceiptStatus
     // this.TxHeight
   }
@@ -83,17 +87,20 @@ class SECTokenTx {
       TimeStamp: SECUtil.bufferToInt(txBuffer[1]),
       TxFrom: txBuffer[2].toString('hex'),
       TxTo: txBuffer[3].toString('hex'),
-      Value: SECUtil.bufferToInt(txBuffer[4]),
+      Value: txBuffer[4].toString(),
       GasLimit: txBuffer[5].toString(),
       GasUsedByTxn: txBuffer[6].toString(),
       GasPrice: txBuffer[7].toString(),
-      Nonce: txBuffer[8].toString('hex'),
+      Nonce: txBuffer[8].toString(),
       InputData: txBuffer[9].toString(),
       Signature: JSON.parse(txBuffer[10].toString())
     }
 
     this.tx.TxHash = SECUtil.rlphash(txBuffer).toString('hex')
-    this.tx.TxFee = parseInt(this.tx.GasUsedByTxn) * parseInt(this.tx.GasPrice)
+
+    let bnGasPrice = new BN(this.tx.GasPrice, 10)
+    let bnGasUsed = new BN(this.tx.GasUsedByTxn, 10)
+    this.tx.TxFee = bnGasPrice.mul(bnGasUsed).toString()
 
     // set this.txBuffer
     this.txBuffer = txBuffer
