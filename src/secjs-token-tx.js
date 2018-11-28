@@ -102,20 +102,6 @@ class SECTokenTx {
     this.txBuffer = txBuffer
   }
 
-  // used for transaction signature
-  _generateMsgHash () {
-    if (this.txBuffer.length !== 11) {
-      throw new Error(`_generateMsgHash: input txBuffer length(${this.txBuffer.length}) mismatch, its length should be: 11`)
-    }
-
-    // message used for sign does not include txVersion, Nonce and Signature
-    let msgBuffer = this.txBuffer.slice(0, this.txBuffer.length - 1)
-    msgBuffer = msgBuffer.splice(8, 1)
-    msgBuffer = msgBuffer.splice(0, 1)
-    let msgHash = SECUtil.rlphash(msgBuffer).toString('hex')
-    return msgHash
-  }
-
   getTxHash () {
     if (this.tx.TxHash !== '') {
       return this.tx.TxHash
@@ -125,7 +111,7 @@ class SECTokenTx {
   }
 
   verifySignature () {
-    let msgHashString = this._generateMsgHash()
+    let msgHashString = this._generateSignMsgHash()
     let msgHashBuffer = Buffer.from(msgHashString, 'hex')
 
     try {
@@ -143,6 +129,28 @@ class SECTokenTx {
     } else {
       return true
     }
+  }
+
+  // used for transaction signature
+  _generateSignMsgHash () {
+    if (this.txBuffer.length !== 11) {
+      throw new Error(`_generateSignMsgHash: input txBuffer length(${this.txBuffer.length}) mismatch, its length should be: 11`)
+    }
+
+    // message used for sign does not include txVersion, Nonce and Signature
+    let msgBuffer = [
+      this.txBuffer[1], // TimeStamp
+      this.txBuffer[2], // From
+      this.txBuffer[3], // To
+      this.txBuffer[4], // Value
+      this.txBuffer[5], // GasLimit
+      this.txBuffer[6], // GasUsedByTxn
+      this.txBuffer[7], // GasPrice
+      this.txBuffer[9] // InputData
+    ]
+
+    let msgHash = SECUtil.rlphash(msgBuffer).toString('hex')
+    return msgHash
   }
 }
 
