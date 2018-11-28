@@ -1,6 +1,6 @@
 {
   "name": "@sec-block/secjs-tx",
-  "version": "0.1.23",
+  "version": "0.1.24",
   "description": "Transaction chain and token chain model handler",
   "bugs": {
     "url": "https://github.com/SEC-block/secjs-tx.git/issues"
