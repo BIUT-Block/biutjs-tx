@@ -65,7 +65,7 @@ class SECTokenTx {
     ]
     this.tx.TxHash = SECUtil.rlphash(this.txBuffer).toString('hex')
 
-    this.tx.TxFee = parseInt(this.tx.GasPrice) * parseInt(this.tx.GasUsedByTxn)
+    this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
     this.tx.TxFee = this.tx.TxFee.toString()
     // this.TxReceiptStatus
     // this.TxHeight
@@ -95,7 +95,7 @@ class SECTokenTx {
     }
 
     this.tx.TxHash = SECUtil.rlphash(txBuffer).toString('hex')
-    this.tx.TxFee = parseInt(this.tx.GasPrice) * parseInt(this.tx.GasUsedByTxn)
+    this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
     this.tx.TxFee = this.tx.TxFee.toString()
 
     // set this.txBuffer
