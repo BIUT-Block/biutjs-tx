@@ -1,6 +1,5 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
-const BN = require('bn.js')
 
 const TX_VERSION = '0.1'
 
@@ -66,9 +65,8 @@ class SECTokenTx {
     ]
     this.tx.TxHash = SECUtil.rlphash(this.txBuffer).toString('hex')
 
-    let bnGasPrice = new BN(this.tx.GasPrice, 10)
-    let bnGasUsed = new BN(this.tx.GasUsedByTxn, 10)
-    this.tx.TxFee = bnGasPrice.mul(bnGasUsed).toString()
+    this.tx.TxFee = parseInt(this.tx.GasPrice) * parseInt(this.tx.GasUsedByTxn)
+    this.tx.TxFee = this.tx.TxFee.toString()
     // this.TxReceiptStatus
     // this.TxHeight
   }
@@ -97,10 +95,8 @@ class SECTokenTx {
     }
 
     this.tx.TxHash = SECUtil.rlphash(txBuffer).toString('hex')
-
-    let bnGasPrice = new BN(this.tx.GasPrice, 10)
-    let bnGasUsed = new BN(this.tx.GasUsedByTxn, 10)
-    this.tx.TxFee = bnGasPrice.mul(bnGasUsed).toString()
+    this.tx.TxFee = parseInt(this.tx.GasPrice) * parseInt(this.tx.GasUsedByTxn)
+    this.tx.TxFee = this.tx.TxFee.toString()
 
     // set this.txBuffer
     this.txBuffer = txBuffer
