@@ -46,11 +46,7 @@ class SECTokenTx {
       if (!(key in tx)) {
         throw new Error(`key: ${key} is not recognized`)
       }
-      if (key === 'Signature') {
-        self.tx[key] = JSON.parse(tx[key])
-      } else {
-        self.tx[key] = tx[key]
-      }
+      self.tx[key] = tx[key]
     })
 
     // set this.txBuffer
