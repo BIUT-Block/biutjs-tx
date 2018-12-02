@@ -111,11 +111,15 @@ class SECTokenTx {
 
   verifySignature () {
     let msgHashBuffer = this._generateSignMsgHash()
+    let signBuffer = this.tx.Signature
+    signBuffer = {
+      v: signBuffer.v,
+      r: Buffer.from(signBuffer.r, 'hex'),
+      s: Buffer.from(signBuffer.s, 'hex')
+    }
 
     try {
-      let v = SECUtils.bufferToInt(this.tx.Signature.v)
-
-      this._senderPubKey = SECUtils.ecrecover(msgHashBuffer, v, this.tx.Signature.r, this.tx.Signature.s)
+      this._senderPubKey = SECUtils.ecrecover(msgHashBuffer, signBuffer.v, signBuffer.r, signBuffer.s)
     } catch (e) {
       return false
     }
