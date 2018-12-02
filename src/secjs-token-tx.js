@@ -1,4 +1,4 @@
-const SECUtil = require('@sec-block/secjs-util')
+const SECUtils = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
 
 const TX_VERSION = '0.1'
@@ -52,7 +52,7 @@ class SECTokenTx {
     // set this.txBuffer
     this.txBuffer = [
       Buffer.from(TX_VERSION),
-      SECUtil.intToBuffer(this.tx.TimeStamp),
+      SECUtils.intToBuffer(this.tx.TimeStamp),
       Buffer.from(this.tx.TxFrom, 'hex'),
       Buffer.from(this.tx.TxTo, 'hex'),
       Buffer.from(this.tx.Value),
@@ -63,12 +63,11 @@ class SECTokenTx {
       Buffer.from(this.tx.InputData),
       Buffer.from(JSON.stringify(this.tx.Signature))
     ]
-    this.tx.TxHash = SECUtil.rlphash(this.txBuffer).toString('hex')
 
+    // calculate and set tx hash and txFee
+    this.tx.TxHash = SECUtils.rlphash(this.txBuffer).toString('hex')
     this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
     this.tx.TxFee = this.tx.TxFee.toString()
-    // this.TxReceiptStatus
-    // this.TxHeight
   }
 
   _setTxFromBuffer (txBuffer) {
@@ -82,7 +81,7 @@ class SECTokenTx {
     // set this.tx
     this.tx = {
       Version: txBuffer[0].toString(),
-      TimeStamp: SECUtil.bufferToInt(txBuffer[1]),
+      TimeStamp: SECUtils.bufferToInt(txBuffer[1]),
       TxFrom: txBuffer[2].toString('hex'),
       TxTo: txBuffer[3].toString('hex'),
       Value: txBuffer[4].toString(),
@@ -94,7 +93,7 @@ class SECTokenTx {
       Signature: JSON.parse(txBuffer[10].toString())
     }
 
-    this.tx.TxHash = SECUtil.rlphash(txBuffer).toString('hex')
+    this.tx.TxHash = SECUtils.rlphash(txBuffer).toString('hex')
     this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
     this.tx.TxFee = this.tx.TxFee.toString()
 
@@ -111,18 +110,17 @@ class SECTokenTx {
   }
 
   verifySignature () {
-    let msgHashString = this._generateSignMsgHash()
-    let msgHashBuffer = Buffer.from(msgHashString, 'hex')
+    let msgHashBuffer = this._generateSignMsgHash()
 
     try {
-      let v = SECUtil.bufferToInt(this.tx.Signature.v)
+      let v = SECUtils.bufferToInt(this.tx.Signature.v)
 
-      this._senderPubKey = SECUtil.ecrecover(msgHashBuffer, v, this.tx.Signature.r, this.tx.Signature.s)
+      this._senderPubKey = SECUtils.ecrecover(msgHashBuffer, v, this.tx.Signature.r, this.tx.Signature.s)
     } catch (e) {
       return false
     }
     let _senderPubKeyBuffer = Buffer.from(this._senderPubKey, 'hex')
-    let addressBuffer = SECUtil.publicToAddress(_senderPubKeyBuffer)
+    let addressBuffer = SECUtils.publicToAddress(_senderPubKeyBuffer)
     let address = addressBuffer.toString('hex')
     if (address !== this.tx.TxFrom) {
       return false
@@ -149,8 +147,23 @@ class SECTokenTx {
       this.txBuffer[9] // InputData
     ]
 
-    let msgHash = SECUtil.rlphash(msgBuffer).toString('hex')
+    let msgHash = SECUtils.rlphash(msgBuffer).toString('hex')
+    msgHash = Buffer.from(msgHash, 'hex')
     return msgHash
+  }
+
+  // calculate signature for a transaction
+  signTx (privKey) {
+    let msgHashBuffer = this._generateSignMsgHash()
+    let txSignature = SECUtils.ecsign(msgHashBuffer, Buffer.from(privKey, 'hex'))
+
+    txSignature = {
+      v: txSignature.v,
+      r: txSignature.r.toString('hex'),
+      s: txSignature.s.toString('hex')
+    }
+
+    return txSignature
   }
 }
 
