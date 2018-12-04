@@ -49,8 +49,61 @@ class SECTokenTx {
       self.tx[key] = tx[key]
     })
 
+    this.tx.TxHash = this._calculateTxHash()
+    this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
+    this.tx.TxFee = this.tx.TxFee.toString()
+
     // set this.txBuffer
     this.txBuffer = [
+      Buffer.from(this.tx.TxHash),
+      Buffer.from(this.tx.TxReceiptStatus),
+      Buffer.from(TX_VERSION),
+      SECUtils.intToBuffer(this.tx.TimeStamp),
+      Buffer.from(this.tx.TxFrom, 'hex'),
+      Buffer.from(this.tx.TxTo, 'hex'),
+      Buffer.from(this.tx.Value),
+      Buffer.from(this.tx.GasLimit),
+      Buffer.from(this.tx.GasUsedByTxn),
+      Buffer.from(this.tx.GasPrice),
+      Buffer.from(this.tx.TxFee),
+      Buffer.from(this.tx.Nonce),
+      Buffer.from(this.tx.InputData),
+      Buffer.from(JSON.stringify(this.tx.Signature))
+    ]
+  }
+
+  _setTxFromBuffer (txBuffer) {
+    // clear this.tx
+    this.tx = SECTokenTxModel
+
+    if (txBuffer.length !== 14) {
+      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: 14`)
+    }
+
+    // set this.tx
+    this.tx = {
+      TxHash: txBuffer[0].toString(),
+      TxReceiptStatus: txBuffer[1].toString(),
+      Version: txBuffer[2].toString(),
+      TimeStamp: SECUtils.bufferToInt(txBuffer[3]),
+      TxFrom: txBuffer[4].toString('hex'),
+      TxTo: txBuffer[5].toString('hex'),
+      Value: txBuffer[6].toString(),
+      GasLimit: txBuffer[7].toString(),
+      GasUsedByTxn: txBuffer[8].toString(),
+      GasPrice: txBuffer[9].toString(),
+      TxFee: txBuffer[10].toString(),
+      Nonce: txBuffer[11].toString(),
+      InputData: txBuffer[12].toString(),
+      Signature: JSON.parse(txBuffer[13].toString())
+    }
+
+    // set this.txBuffer
+    this.txBuffer = txBuffer
+  }
+
+  _calculateTxHash () {
+    let txHashBuffer = [
       Buffer.from(TX_VERSION),
       SECUtils.intToBuffer(this.tx.TimeStamp),
       Buffer.from(this.tx.TxFrom, 'hex'),
@@ -64,41 +117,7 @@ class SECTokenTx {
       Buffer.from(JSON.stringify(this.tx.Signature))
     ]
 
-    // calculate and set tx hash and txFee
-    this.tx.TxHash = SECUtils.rlphash(this.txBuffer).toString('hex')
-    this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
-    this.tx.TxFee = this.tx.TxFee.toString()
-  }
-
-  _setTxFromBuffer (txBuffer) {
-    // clear this.tx
-    this.tx = SECTokenTxModel
-
-    if (txBuffer.length !== 11) {
-      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: 11`)
-    }
-
-    // set this.tx
-    this.tx = {
-      Version: txBuffer[0].toString(),
-      TimeStamp: SECUtils.bufferToInt(txBuffer[1]),
-      TxFrom: txBuffer[2].toString('hex'),
-      TxTo: txBuffer[3].toString('hex'),
-      Value: txBuffer[4].toString(),
-      GasLimit: txBuffer[5].toString(),
-      GasUsedByTxn: txBuffer[6].toString(),
-      GasPrice: txBuffer[7].toString(),
-      Nonce: txBuffer[8].toString(),
-      InputData: txBuffer[9].toString(),
-      Signature: JSON.parse(txBuffer[10].toString())
-    }
-
-    this.tx.TxHash = SECUtils.rlphash(txBuffer).toString('hex')
-    this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
-    this.tx.TxFee = this.tx.TxFee.toString()
-
-    // set this.txBuffer
-    this.txBuffer = txBuffer
+    return SECUtils.rlphash(txHashBuffer).toString('hex')
   }
 
   getTxHash () {
@@ -135,20 +154,21 @@ class SECTokenTx {
 
   // used for transaction signature
   _generateSignMsgHash () {
-    if (this.txBuffer.length !== 11) {
-      throw new Error(`_generateSignMsgHash: input txBuffer length(${this.txBuffer.length}) mismatch, its length should be: 11`)
+    if (this.txBuffer.length !== 14) {
+      throw new Error(`_generateSignMsgHash: input txBuffer length(${this.txBuffer.length}) mismatch, its length should be: 14`)
     }
 
     // message used for sign does not include txVersion, Nonce and Signature
     let msgBuffer = [
-      this.txBuffer[1], // TimeStamp
-      this.txBuffer[2], // From
-      this.txBuffer[3], // To
-      this.txBuffer[4], // Value
-      this.txBuffer[5], // GasLimit
-      this.txBuffer[6], // GasUsedByTxn
-      this.txBuffer[7], // GasPrice
-      this.txBuffer[9] // InputData
+      this.txBuffer[3], // TimeStamp
+      this.txBuffer[4], // From
+      this.txBuffer[5], // To
+      this.txBuffer[6], // Value
+      this.txBuffer[7], // GasLimit
+      this.txBuffer[8], // GasUsedByTxn
+      this.txBuffer[9], // GasPrice
+      // this.txBuffer[11], // Nonce
+      this.txBuffer[12] // InputData
     ]
 
     let msgHash = SECUtils.rlphash(msgBuffer).toString('hex')
