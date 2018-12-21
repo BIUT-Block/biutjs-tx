@@ -9,6 +9,7 @@ let tokenchainTransModel = {
   TxFrom: '',
   TxTo: '',
   Value: '',
+  ContractAddress: '',
   GasLimit: '',
   GasUsedByTxn: '',
   GasPrice: '',

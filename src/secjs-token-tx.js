@@ -64,6 +64,7 @@ class SECTokenTx {
       Buffer.from(this.tx.TxFrom, 'hex'),
       Buffer.from(this.tx.TxTo, 'hex'),
       Buffer.from(this.tx.Value),
+      Buffer.from(this.tx.ContractAddress),
       Buffer.from(this.tx.GasLimit),
       Buffer.from(this.tx.GasUsedByTxn),
       Buffer.from(this.tx.GasPrice),
@@ -78,8 +79,8 @@ class SECTokenTx {
     // clear this.tx
     this.tx = SECTokenTxModel
 
-    if (txBuffer.length !== 14) {
-      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: 14`)
+    if (txBuffer.length !== 15) {
+      throw new Error(`input txBuffer length(${txBuffer.length}) mismatch, its length should be: 15`)
     }
 
     // set this.tx
@@ -91,13 +92,14 @@ class SECTokenTx {
       TxFrom: txBuffer[4].toString('hex'),
       TxTo: txBuffer[5].toString('hex'),
       Value: txBuffer[6].toString(),
-      GasLimit: txBuffer[7].toString(),
-      GasUsedByTxn: txBuffer[8].toString(),
-      GasPrice: txBuffer[9].toString(),
-      TxFee: txBuffer[10].toString(),
-      Nonce: txBuffer[11].toString(),
-      InputData: txBuffer[12].toString(),
-      Signature: JSON.parse(txBuffer[13].toString())
+      ContractAddress: txBuffer[7].toString(),
+      GasLimit: txBuffer[8].toString(),
+      GasUsedByTxn: txBuffer[9].toString(),
+      GasPrice: txBuffer[10].toString(),
+      TxFee: txBuffer[11].toString(),
+      Nonce: txBuffer[12].toString(),
+      InputData: txBuffer[13].toString(),
+      Signature: JSON.parse(txBuffer[14].toString())
     }
 
     // set this.txBuffer
@@ -111,6 +113,7 @@ class SECTokenTx {
       Buffer.from(this.tx.TxFrom, 'hex'),
       Buffer.from(this.tx.TxTo, 'hex'),
       Buffer.from(this.tx.Value),
+      Buffer.from(this.tx.ContractAddress),
       Buffer.from(this.tx.GasLimit),
       Buffer.from(this.tx.GasUsedByTxn),
       Buffer.from(this.tx.GasPrice),
@@ -156,8 +159,8 @@ class SECTokenTx {
 
   // used for transaction signature
   _generateSignMsgHash () {
-    if (this.txBuffer.length !== 14) {
-      throw new Error(`_generateSignMsgHash: input txBuffer length(${this.txBuffer.length}) mismatch, its length should be: 14`)
+    if (this.txBuffer.length !== 15) {
+      throw new Error(`_generateSignMsgHash: input txBuffer length(${this.txBuffer.length}) mismatch, its length should be: 15`)
     }
 
     // message used for sign does not include txVersion, Nonce and Signature
@@ -166,11 +169,12 @@ class SECTokenTx {
       this.txBuffer[4], // From
       this.txBuffer[5], // To
       this.txBuffer[6], // Value
-      this.txBuffer[7], // GasLimit
-      this.txBuffer[8], // GasUsedByTxn
-      this.txBuffer[9], // GasPrice
-      // this.txBuffer[11], // Nonce
-      this.txBuffer[12] // InputData
+      this.txBuffer[7], // ContractAddress
+      this.txBuffer[8], // GasLimit
+      this.txBuffer[9], // GasUsedByTxn
+      this.txBuffer[10], // GasPrice
+      // this.txBuffer[12], // Nonce
+      this.txBuffer[13] // InputData
     ]
 
     let msgHash = SECUtils.rlphash(msgBuffer).toString('hex')
