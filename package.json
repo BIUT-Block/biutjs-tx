@@ -22,6 +22,7 @@
   ],
   "dependencies": {
     "@sec-block/secjs-util": "^1.1.19",
+    "big.js": "^5.2.2",
     "yargs": "^3.15.0"
   },
   "devDependencies": {

@@ -1,7 +1,9 @@
+const Big = require('big.js')
 const SECUtils = require('@sec-block/secjs-util')
 const SECTokenTxModel = require('../model/tokenchain-trans-model')
 
 const TX_VERSION = '0.1'
+const DEC_NUM = 8
 
 class SECTokenTx {
   /**
@@ -50,7 +52,7 @@ class SECTokenTx {
     })
 
     this.tx.TxHash = this._calculateTxHash()
-    this.tx.TxFee = parseFloat(this.tx.GasPrice) * parseFloat(this.tx.GasUsedByTxn)
+    this.tx.TxFee = new Big(this.tx.GasPrice).mul(this.tx.GasUsedByTxn).toFixed(DEC_NUM)
     this.tx.TxFee = this.tx.TxFee.toString()
 
     // set this.txBuffer
