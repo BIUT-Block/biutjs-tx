@@ -53,7 +53,7 @@ class SECTokenTx {
 
     this.tx.TxHash = this._calculateTxHash()
     this.tx.TxFee = new Big(this.tx.GasPrice).mul(this.tx.GasUsedByTxn).toFixed(DEC_NUM)
-    this.tx.TxFee = this.tx.TxFee.toString()
+    this.tx.TxFee = parseFloat(this.tx.TxFee).toString()
 
     // set this.txBuffer
     this.txBuffer = [
