@@ -1,6 +1,8 @@
 const SECUtil = require('@sec-block/secjs-util')
 const SECTransactionTxModel = require('../model/transactionchain-trans-model')
 
+const TX_VERSION = '0.1'
+
 class SECTransactionTx {
   /**
     * create a transaction chain tx with config
@@ -45,6 +47,7 @@ class SECTransactionTx {
       }
       self.tx.key = tx.key
     })
+    this.tx.TxHash = this._calculateTxHash()
 
     // set this.txBuffer
     this.txBuffer = [
@@ -89,8 +92,27 @@ class SECTransactionTx {
     this.txBuffer = txBuffer
   }
 
+  _calculateTxHash () {
+    let txHashBuffer = [
+      Buffer.from(TX_VERSION),
+      SECUtil.intToBuffer(this.tx.TimeStamp),
+      Buffer.from(this.tx.SellerAddress, 'hex'),
+      Buffer.from(this.tx.BuyerAddress, 'hex'),
+      Buffer.from(this.tx.ShareHash),
+      Buffer.from(this.tx.ShareTimeStamp),
+      SECUtil.intToBuffer(this.tx.SharedTimes),
+      Buffer.from(this.tx.InputData)
+    ]
+
+    return SECUtil.rlphash(txHashBuffer).toString('hex')
+  }
+
   getTxHash () {
-    return SECUtil.rlphash(this.txBuffer).toString('hex')
+    if (this.tx.TxHash !== '') {
+      return this.tx.TxHash
+    } else {
+      throw Error('transaction hash not defined')
+    }
   }
 }
 
